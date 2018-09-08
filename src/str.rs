@@ -48,6 +48,32 @@ impl RawStr {
 	pub fn iter(&self) -> std::slice::Iter<u8> {
 		self.inner.iter()
 	}
+
+	pub fn split_at(&self, mid: usize) -> (&RawStr, &RawStr) {
+		let (a, b) = self.inner.split_at(mid);
+		(RawStr::from_bytes(a), RawStr::from_bytes(b))
+	}
+
+	pub fn split_at_mut(&mut self, mid: usize) -> (&mut RawStr, &mut RawStr) {
+		let (a, b) = self.inner.split_at_mut(mid);
+		(RawStr::from_mut_bytes(a), RawStr::from_mut_bytes(b))
+	}
+
+	pub fn contains(&self, x: &u8) -> bool {
+		self.inner.contains(x)
+	}
+
+	pub fn starts_with<T: AsRef<RawStr>>(&self, x: T) -> bool {
+		self.inner.starts_with(x.as_ref().as_bytes())
+	}
+
+	pub fn ends_with<T: AsRef<RawStr>>(&self, x: T) -> bool {
+		self.inner.ends_with(x.as_ref().as_bytes())
+	}
+
+	pub fn is_ascii(&self) -> bool {
+		self.inner.is_ascii()
+	}
 }
 
 // AsRef {{{
