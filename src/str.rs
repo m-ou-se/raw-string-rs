@@ -44,6 +44,10 @@ impl RawStr {
 	pub fn len(&self) -> usize {
 		self.inner.len()
 	}
+
+	pub fn iter(&self) -> std::slice::Iter<u8> {
+		self.inner.iter()
+	}
 }
 
 // AsRef {{{
@@ -114,6 +118,18 @@ impl_index!(RangeFull);
 impl_index!(RangeInclusive<usize>);
 impl_index!(RangeTo<usize>);
 impl_index!(RangeToInclusive<usize>);
+
+// }}}
+
+// IntoIterator {{{
+
+impl<'a> IntoIterator for &'a RawStr {
+	type Item = &'a u8;
+	type IntoIter = std::slice::Iter<'a, u8>;
+	fn into_iter(self) -> Self::IntoIter {
+		self.iter()
+	}
+}
 
 // }}}
 
