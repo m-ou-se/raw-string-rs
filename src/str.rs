@@ -45,6 +45,42 @@ impl RawStr {
 		self.inner.len()
 	}
 
+	pub fn is_empty(&self) -> bool {
+		self.inner.is_empty()
+	}
+
+	pub fn first(&self) -> Option<&u8> {
+		self.inner.first()
+	}
+
+	pub fn first_mut(&mut self) -> Option<&mut u8> {
+		self.inner.first_mut()
+	}
+
+	pub fn last(&self) -> Option<&u8> {
+		self.inner.last()
+	}
+
+	pub fn last_mut(&mut self) -> Option<&mut u8> {
+		self.inner.last_mut()
+	}
+
+	pub fn split_first(&self) -> Option<(&u8, &RawStr)> {
+		self.inner.split_first().map(|(a, b)| (a, RawStr::from_bytes(b)))
+	}
+
+	pub fn split_first_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
+		self.inner.split_first_mut().map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
+	}
+
+	pub fn split_last(&self) -> Option<(&u8, &RawStr)> {
+		self.inner.split_last().map(|(a, b)| (a, RawStr::from_bytes(b)))
+	}
+
+	pub fn split_last_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
+		self.inner.split_last_mut().map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
+	}
+
 	pub fn iter(&self) -> std::slice::Iter<u8> {
 		self.inner.iter()
 	}
