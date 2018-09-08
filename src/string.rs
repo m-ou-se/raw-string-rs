@@ -70,11 +70,15 @@ impl RawString {
 		unsafe { Box::from_raw(raw) }
 	}
 
-	pub fn push<T: AsRef<RawStr>>(&mut self, s: T) {
+	pub fn push(&mut self, b: u8) {
+		self.inner.push(b)
+	}
+
+	pub fn push_str<T: AsRef<RawStr>>(&mut self, s: T) {
 		self.inner.extend_from_slice(s.as_ref().as_bytes())
 	}
 
-	pub fn as_mut_vec(&mut self) -> &mut Vec<u8> {
+	pub fn as_mut_bytes(&mut self) -> &mut Vec<u8> {
 		&mut self.inner
 	}
 }
