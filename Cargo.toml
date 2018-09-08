@@ -1,0 +1,10 @@
+[package]
+name = "raw-string"
+description = "RawStr/RawString are like str/String, but without any guaranteed encoding"
+version = "0.1.0"
+authors = ["Mara Bos <m-ou.se@m-ou.se>"]
+documentation = "https://docs.rs/raw-string/"
+keywords = ["raw", "string", "bytes"]
+license = "BSD-2-Clause"
+
+[dependencies]
