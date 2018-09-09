@@ -66,19 +66,27 @@ impl RawStr {
 	}
 
 	pub fn split_first(&self) -> Option<(&u8, &RawStr)> {
-		self.inner.split_first().map(|(a, b)| (a, RawStr::from_bytes(b)))
+		self.inner
+			.split_first()
+			.map(|(a, b)| (a, RawStr::from_bytes(b)))
 	}
 
 	pub fn split_first_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
-		self.inner.split_first_mut().map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
+		self.inner
+			.split_first_mut()
+			.map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
 	}
 
 	pub fn split_last(&self) -> Option<(&u8, &RawStr)> {
-		self.inner.split_last().map(|(a, b)| (a, RawStr::from_bytes(b)))
+		self.inner
+			.split_last()
+			.map(|(a, b)| (a, RawStr::from_bytes(b)))
 	}
 
 	pub fn split_last_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
-		self.inner.split_last_mut().map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
+		self.inner
+			.split_last_mut()
+			.map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
 	}
 
 	pub fn iter(&self) -> std::slice::Iter<u8> {
