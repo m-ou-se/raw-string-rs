@@ -160,6 +160,40 @@ impl AsRef<[u8]> for RawString {
 
 // }}}
 
+// From {{{
+
+impl<'a> From<&'a RawStr> for RawString {
+	fn from(src: &'a RawStr) -> RawString {
+		RawString::from_bytes(src.as_bytes().to_owned())
+	}
+}
+
+impl<'a> From<&'a str> for RawString {
+	fn from(src: &'a str) -> RawString {
+		RawString::from_bytes(src.as_bytes().to_owned())
+	}
+}
+
+impl<'a> From<&'a [u8]> for RawString {
+	fn from(src: &'a [u8]) -> RawString {
+		RawString::from_bytes(src.to_owned())
+	}
+}
+
+impl From<String> for RawString {
+	fn from(src: String) -> RawString {
+		RawString::from_bytes(src.into_bytes())
+	}
+}
+
+impl From<Vec<u8>> for RawString {
+	fn from(src: Vec<u8>) -> RawString {
+		RawString::from_bytes(src)
+	}
+}
+
+// }}}
+
 // Display / Debug {{{
 
 impl Display for RawString {

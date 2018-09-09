@@ -195,6 +195,22 @@ impl<'a> IntoIterator for &'a RawStr {
 
 // }}}
 
+// From {{{
+
+impl<'a> From<&'a str> for &'a RawStr {
+	fn from(src: &'a str) -> &'a RawStr {
+		RawStr::from_str(src)
+	}
+}
+
+impl<'a> From<&'a [u8]> for &'a RawStr {
+	fn from(src: &'a [u8]) -> &'a RawStr {
+		RawStr::from_bytes(src)
+	}
+}
+
+// }}}
+
 // Display {{{
 
 impl Display for RawStr {
