@@ -1,11 +1,13 @@
 use std;
 use std::convert::AsRef;
-use std::fmt::{Debug, Display, Write, Formatter};
+use std::ffi::OsStr;
+use std::fmt::{Debug, Display, Formatter, Write};
 use std::mem::transmute;
 use std::ops::{
 	Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive,
 };
-use std::str::{from_utf8, from_utf8_unchecked};
+use std::path::Path;
+use std::str::{from_utf8, from_utf8_unchecked, Utf8Error};
 
 /// A `str` with unchecked contents.
 ///
@@ -117,6 +119,43 @@ impl RawStr {
 
 	pub fn is_ascii(&self) -> bool {
 		self.inner.is_ascii()
+	}
+
+	pub fn to_str(&self) -> Result<&str, Utf8Error> {
+		from_utf8(self.as_bytes())
+	}
+
+	/// Convert to an OsStr.
+	///
+	/// On Unix, it never fails.
+	/// On other platforms, it must be encoded as UTF-8.
+	///
+	/// A never-failing version for Unix only is available as
+	/// [`unix::RawStrExt::as_osstr`](struct.RawStr.html#method.as_osstr).
+	pub fn to_osstr(&self) -> Result<&OsStr, Utf8Error> {
+		self.to_osstr_()
+	}
+
+	/// Convert to a Path.
+	///
+	/// On Unix, it never fails.
+	/// On other platforms, it must be encoded as UTF-8.
+	///
+	/// A never-failing version for Unix only is available as
+	/// [`unix::RawStrExt::as_path`](struct.RawStr.html#method.as_path).
+	pub fn to_path(&self) -> Result<&Path, Utf8Error> {
+		Ok(Path::new(self.to_osstr()?))
+	}
+
+	#[cfg(unix)]
+	fn to_osstr_(&self) -> Result<&OsStr, Utf8Error> {
+		use std::os::unix::ffi::OsStrExt;
+		Ok(OsStr::from_bytes(self.as_bytes()))
+	}
+
+	#[cfg(not(unix))]
+	fn to_osstr_(&self) -> Result<&OsStr, Utf8Error> {
+		Ok(OsStr::new(self.to_str()?))
 	}
 }
 

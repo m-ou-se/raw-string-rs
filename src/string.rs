@@ -1,10 +1,13 @@
 use std;
 use std::borrow::{Borrow, ToOwned};
+use std::ffi::OsString;
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{
 	Deref, DerefMut, Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo,
 	RangeToInclusive,
 };
+use std::path::PathBuf;
+use std::string::FromUtf8Error;
 use str::RawStr;
 
 /// A `String` with unchecked contents.
@@ -80,6 +83,43 @@ impl RawString {
 
 	pub fn as_mut_bytes(&mut self) -> &mut Vec<u8> {
 		&mut self.inner
+	}
+
+	pub fn to_string(self) -> Result<String, FromUtf8Error> {
+		String::from_utf8(self.into_bytes())
+	}
+
+	/// Convert to an OsString.
+	///
+	/// On Unix, it never fails.
+	/// On other platforms, it must be encoded as UTF-8.
+	///
+	/// A never-failing version for Unix only is available as
+	/// [`unix::RawStringExt::into_osstring`](struct.RawString.html#method.into_osstring).
+	pub fn to_osstring(self) -> Result<OsString, FromUtf8Error> {
+		self.to_osstring_()
+	}
+
+	/// Convert to a PathBuf.
+	///
+	/// On Unix, it never fails.
+	/// On other platforms, it must be encoded as UTF-8.
+	///
+	/// A never-failing version for Unix only is available as
+	/// [`unix::RawStringExt::into_pathbuf`](struct.RawString.html#method.into_pathbuf).
+	pub fn to_pathbuf(self) -> Result<PathBuf, FromUtf8Error> {
+		Ok(PathBuf::from(self.to_osstring()?))
+	}
+
+	#[cfg(unix)]
+	fn to_osstring_(self) -> Result<OsString, FromUtf8Error> {
+		use std::os::unix::ffi::OsStringExt;
+		Ok(OsString::from_vec(self.into_bytes()))
+	}
+
+	#[cfg(not(unix))]
+	fn to_osstring_(self) -> Result<OsString, FromUtf8Error> {
+		Ok(OsString::from(self.to_string()?))
 	}
 }
 

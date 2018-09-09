@@ -10,3 +10,6 @@ mod string;
 
 pub use str::*;
 pub use string::*;
+
+#[cfg(unix)]
+pub mod unix;
