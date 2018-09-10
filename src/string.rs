@@ -70,6 +70,26 @@ impl RawString {
 		self.inner.clear()
 	}
 
+	// Things that could be added:
+	//   Iterator (+mut) / IntoIterator
+	//
+	//   pub fn truncate(&mut self, new_len: usize)
+	//   pub fn pop(&mut self) -> Option<u8>
+	//   pub fn remove(&mut self, idx: usize) -> u8
+	//   pub fn retain<F: FnMut(u8) -> bool>(&mut self, f: F)
+	//   pub fn insert(&mut self, idx: usize, b: u8)
+	//   pub fn insert_str<T: AsRef<RawStr>>(&mut self, idx: usize, string: T)
+	//   pub fn split_off(&mut self, at: usize) -> RawString
+	//   pub fn drain<R: RangeBounds<usize>>(&mut self, range: R) -> Drain
+	//   pub fn replace_range<R: RangeBounds<usize>, T: AsRef<RawStr>>(&mut self, range: R, replace_with: T)
+	//
+	//   from_utf16 (to convert to WTF-8)
+	//
+	// String has these, which also exist in str. Why?
+	//   pub fn as_butes(&self) -> &[u8]
+	//   pub fn len(&self) -> usize
+	//   pub fn is_empty(&self) -> bool
+
 	pub fn into_boxed_raw_str(self) -> Box<RawStr> {
 		let raw = Box::into_raw(self.inner.into_boxed_slice()) as *mut RawStr;
 		unsafe { Box::from_raw(raw) }

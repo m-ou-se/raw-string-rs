@@ -123,6 +123,53 @@ impl RawStr {
 		self.inner.is_ascii()
 	}
 
+	// Things that could be added:
+	//   Iterator (+mut)
+	//
+	//   pub fn get<I: SliceIndex<[u8]>>(&self, i: I) -> Option<& uhh..>
+	//   pub fn get_mut<I: SliceIndex<[u8]>>(&self, i: I) -> Option<&mut uhh..>
+	//   pub unsafe fn get_unchecked<I: SliceIndex<[u8]>>(&self, i: I) -> & uhh..
+	//   pub unsafe fn get_mut_unchecked<I: SliceIndex<[u8]>>(&self, i: I) -> &mut uhh..
+	//   pub unsafe fn slice_unchecked(&self, begin: usize, end: usize) -> &RawStr
+	//   pub unsafe fn slice_mut_unchecked(&self, begin: usize, end: usize) -> &mut RawStr
+	//
+	//   pub fn split_whitespace(&self) -> SplitWhitespace
+	//   pub fn lines(&self) -> Lines
+	//
+	//   pub fn contains<'a, P: RawPattern<'a>>(&'a self, pat: P) -> bool
+	//   pub fn starts_with<'a, P: RawPattern<'a>>(&'a self, pat: P) -> bool
+	//   pub fn ends_with<'a, P: RawPattern<'a>>(&'a self, pat: P) -> bool
+	//   pub fn find<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Option<usize>
+	//   pub fn rfind<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Option<usize>
+	//   pub fn split<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Split<'a, P>
+	//   pub fn rsplit<'a, P: RawPattern<'a>>(&'a self, pat: P) -> RSplit<'a, P>
+	//   pub fn split_terminator<'a, P: RawPattern<'a>>(&'a self, pat: P) -> SplitTerminator<'a, P>
+	//   pub fn rsplit_terminator<'a, P: RawPattern<'a>>(&'a self, pat: P) -> RSplitTerminator<'a, P>
+	//   pub fn splitn<'a, P: RawPattern<'a>>(&'a self, n: usize, pat: P) -> Split<'a, P>
+	//   pub fn rsplitn<'a, P: RawPattern<'a>>(&'a self, n: usize, pat: P) -> RSplit<'a, P>
+	//   pub fn matches<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
+	//   pub fn rmatches<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
+	//   pub fn match_indices<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
+	//   pub fn rmatch_indices<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
+	//   pub fn trim
+	//   pub fn trim_left
+	//   pub fn trim_right
+	//   pub fn trim_matches <RawPattern>
+	//   pub fn trim_left_matches <RawPattern>
+	//   pub fn trim_right_matches <RawPattern>
+	//   // (and RawPattern)
+	//
+	//   pub fn eq_ignore_ascii_case
+	//   pub fn make_ascii_uppercase
+	//   pub fn make_ascii_lowercase
+	//   pub fn replace (RawPattern -> AsRef<RawStr>) -> RawString
+	//   pub fn replace_n (RawPattern -> AsRef<RawStr>, n) -> RawString
+	//
+	//   pub fn is_utf8_char_boundary(&self, index: usize) -> bool
+	//   pub fn utf8_chars() -> Utf8Chars
+	//   pub fn utf8_char_indices() -> Utf8CharIndices
+	//   pub fn encode_utf16(&self) -> EncodeUtf16
+
 	pub fn to_str(&self) -> Result<&str, Utf8Error> {
 		from_utf8(self.as_bytes())
 	}
