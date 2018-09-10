@@ -44,6 +44,10 @@ impl RawString {
 		self.inner
 	}
 
+	pub fn capacity(&self) -> usize {
+		self.inner.capacity()
+	}
+
 	pub fn reserve(&mut self, additional: usize) {
 		self.inner.reserve(additional)
 	}
