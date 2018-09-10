@@ -49,6 +49,10 @@ impl RawStr {
 		self.inner.is_empty()
 	}
 
+	pub fn as_ptr(&self) -> *const u8 {
+		self.inner.as_ptr()
+	}
+
 	pub fn first(&self) -> Option<&u8> {
 		self.inner.first()
 	}
