@@ -16,8 +16,6 @@ use str::RawStr;
 /// Unlike `String`, there are no guarantees about the contents being valid UTF-8.
 /// Unlike `Vec<u8>`, its Display and Debug implementations show a string, not
 /// an array of numbers.
-///
-/// Very similar to the Unix implementation of `OsString`.
 #[derive(Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct RawString {
 	inner: Vec<u8>,

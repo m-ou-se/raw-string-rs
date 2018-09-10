@@ -15,8 +15,6 @@ use std::str::{from_utf8, from_utf8_unchecked, Utf8Error};
 /// Unlike `str`, there are no guarantees about the contents being valid UTF-8.
 /// Unlike `[u8]`, its Display and Debug implementations show a string, not an
 /// array of numbers.
-///
-/// Very similar to the Unix implementation of `OsStr`.
 #[derive(PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct RawStr {
 	inner: [u8],
