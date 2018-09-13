@@ -209,6 +209,34 @@ impl AsRef<[u8]> for RawString {
 
 // }}}
 
+// {{{ IntoIterator
+
+impl IntoIterator for RawString {
+	type Item = u8;
+	type IntoIter = std::vec::IntoIter<u8>;
+	fn into_iter(self) -> Self::IntoIter {
+		self.inner.into_iter()
+	}
+}
+
+impl<'a> IntoIterator for &'a RawString {
+	type Item = u8;
+	type IntoIter = std::iter::Cloned<std::slice::Iter<'a, u8>>;
+	fn into_iter(self) -> Self::IntoIter {
+		self.bytes()
+	}
+}
+
+impl<'a> IntoIterator for &'a mut RawString {
+	type Item = &'a mut u8;
+	type IntoIter = std::slice::IterMut<'a, u8>;
+	fn into_iter(self) -> Self::IntoIter {
+		self.bytes_mut()
+	}
+}
+
+// }}}
+
 // From {{{
 
 impl<'a> From<&'a RawStr> for RawString {
