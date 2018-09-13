@@ -38,11 +38,11 @@ impl RawStr {
 		&self.inner
 	}
 
-	pub fn from_mut_bytes(bytes: &mut [u8]) -> &mut Self {
+	pub fn from_bytes_mut(bytes: &mut [u8]) -> &mut Self {
 		unsafe { transmute::<&mut [u8], &mut Self>(bytes) }
 	}
 
-	pub fn as_mut_bytes(&mut self) -> &mut [u8] {
+	pub fn as_bytes_mut(&mut self) -> &mut [u8] {
 		&mut self.inner
 	}
 
@@ -83,7 +83,7 @@ impl RawStr {
 	pub fn split_first_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
 		self.inner
 			.split_first_mut()
-			.map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
+			.map(|(a, b)| (a, RawStr::from_bytes_mut(b)))
 	}
 
 	pub fn split_last(&self) -> Option<(&u8, &RawStr)> {
@@ -95,7 +95,7 @@ impl RawStr {
 	pub fn split_last_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
 		self.inner
 			.split_last_mut()
-			.map(|(a, b)| (a, RawStr::from_mut_bytes(b)))
+			.map(|(a, b)| (a, RawStr::from_bytes_mut(b)))
 	}
 
 	pub fn iter(&self) -> std::slice::Iter<u8> {
@@ -109,7 +109,7 @@ impl RawStr {
 
 	pub fn split_at_mut(&mut self, mid: usize) -> (&mut RawStr, &mut RawStr) {
 		let (a, b) = self.inner.split_at_mut(mid);
-		(RawStr::from_mut_bytes(a), RawStr::from_mut_bytes(b))
+		(RawStr::from_bytes_mut(a), RawStr::from_bytes_mut(b))
 	}
 
 	pub fn contains(&self, x: &u8) -> bool {
@@ -266,7 +266,7 @@ impl<'a> Default for &'a RawStr {
 
 impl<'a> Default for &'a mut RawStr {
 	fn default() -> Self {
-		RawStr::from_mut_bytes(&mut [])
+		RawStr::from_bytes_mut(&mut [])
 	}
 }
 
@@ -284,7 +284,7 @@ macro_rules! impl_index {
 		}
 		impl IndexMut<$range> for RawStr {
 			fn index_mut(&mut self, index: $range) -> &mut RawStr {
-				RawStr::from_mut_bytes(&mut self.as_mut_bytes()[index])
+				RawStr::from_bytes_mut(&mut self.as_bytes_mut()[index])
 			}
 		}
 	};

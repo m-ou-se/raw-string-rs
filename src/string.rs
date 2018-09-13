@@ -156,7 +156,7 @@ impl Deref for RawString {
 
 impl DerefMut for RawString {
 	fn deref_mut(&mut self) -> &mut RawStr {
-		RawStr::from_mut_bytes(&mut self.inner)
+		RawStr::from_bytes_mut(&mut self.inner)
 	}
 }
 
