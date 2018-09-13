@@ -2,10 +2,7 @@ use std;
 use std::borrow::{Borrow, ToOwned};
 use std::ffi::OsString;
 use std::fmt::{Debug, Display, Formatter};
-use std::ops::{
-	Deref, DerefMut, Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo,
-	RangeToInclusive,
-};
+use std::ops::{Deref, DerefMut};
 use std::path::PathBuf;
 use std::string::FromUtf8Error;
 use str::RawStr;
@@ -159,33 +156,6 @@ impl DerefMut for RawString {
 		RawStr::from_bytes_mut(&mut self.inner)
 	}
 }
-
-// }}}
-
-// Index {{{
-
-macro_rules! impl_index {
-	($range:ty) => {
-		impl Index<$range> for RawString {
-			type Output = RawStr;
-			fn index(&self, index: $range) -> &RawStr {
-				&self.deref()[index]
-			}
-		}
-		impl IndexMut<$range> for RawString {
-			fn index_mut(&mut self, index: $range) -> &mut RawStr {
-				&mut self.deref_mut()[index]
-			}
-		}
-	};
-}
-
-impl_index!(Range<usize>);
-impl_index!(RangeFrom<usize>);
-impl_index!(RangeFull);
-impl_index!(RangeInclusive<usize>);
-impl_index!(RangeTo<usize>);
-impl_index!(RangeToInclusive<usize>);
 
 // }}}
 
