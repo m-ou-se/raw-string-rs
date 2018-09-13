@@ -108,7 +108,7 @@ impl RawStr {
 		(RawStr::from_bytes_mut(a), RawStr::from_bytes_mut(b))
 	}
 
-	pub fn contains(&self, x: u8) -> bool {
+	pub fn contains_byte(&self, x: u8) -> bool {
 		self.inner.contains(&x)
 	}
 
