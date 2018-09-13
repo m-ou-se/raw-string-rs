@@ -128,6 +128,14 @@ impl RawStr {
 		self.inner.is_ascii()
 	}
 
+	pub fn bytes(&self) -> std::slice::Iter<u8> {
+		self.inner.iter()
+	}
+
+	pub fn bytes_mut(&mut self) -> std::slice::IterMut<u8> {
+		self.inner.iter_mut()
+	}
+
 	/// Iterate over chunks of valid UTF-8.
 	///
 	/// The iterator iterates over the chunks of valid UTF-8 separated by any
@@ -138,8 +146,6 @@ impl RawStr {
 	}
 
 	// Things that could be added:
-	//   Iterator (+mut)
-	//
 	//   pub fn get<I: SliceIndex<[u8]>>(&self, i: I) -> Option<& uhh..>
 	//   pub fn get_mut<I: SliceIndex<[u8]>>(&self, i: I) -> Option<&mut uhh..>
 	//   pub unsafe fn get_unchecked<I: SliceIndex<[u8]>>(&self, i: I) -> & uhh..
