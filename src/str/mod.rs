@@ -1,4 +1,5 @@
 use std;
+use std::char::REPLACEMENT_CHARACTER;
 use std::convert::AsRef;
 use std::ffi::OsStr;
 use std::fmt::{Debug, Display, Formatter, Write};
@@ -7,7 +8,11 @@ use std::ops::{
 	Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive,
 };
 use std::path::Path;
-use std::str::{from_utf8, from_utf8_unchecked, Utf8Error};
+use std::str::{from_utf8, Utf8Error};
+
+mod utf8chunks;
+
+pub use self::utf8chunks::{Utf8Chunk, Utf8ChunksIter};
 
 /// A `str` with unchecked contents.
 ///
@@ -121,6 +126,15 @@ impl RawStr {
 
 	pub fn is_ascii(&self) -> bool {
 		self.inner.is_ascii()
+	}
+
+	/// Iterate over chunks of valid UTF-8.
+	///
+	/// The iterator iterates over the chunks of valid UTF-8 separated by any
+	/// broken characters, which could be replaced by the unicode replacement
+	/// character.
+	pub fn utf8_chunks(&self) -> Utf8ChunksIter {
+		Utf8ChunksIter { bytes: &self.inner }
 	}
 
 	// Things that could be added:
@@ -311,22 +325,10 @@ impl<'a> From<&'a [u8]> for &'a RawStr {
 
 impl Display for RawStr {
 	fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-		let mut bytes = self.as_bytes();
-		while !bytes.is_empty() {
-			match from_utf8(bytes) {
-				Ok(s) => {
-					f.write_str(s)?;
-					break;
-				}
-				Err(e) => {
-					let (valid, rest) = bytes.split_at(e.valid_up_to());
-					f.write_str(unsafe { from_utf8_unchecked(valid) })?;
-					f.write_char('\u{FFFD}')?;
-					match e.error_len() {
-						Some(n) => bytes = &rest[n..],
-						None => break,
-					}
-				}
+		for Utf8Chunk { valid, broken } in self.utf8_chunks() {
+			f.write_str(valid)?;
+			if !broken.is_empty() {
+				f.write_char(REPLACEMENT_CHARACTER)?;
 			}
 		}
 		Ok(())
@@ -337,39 +339,28 @@ impl Display for RawStr {
 
 // Debug {{{
 
+fn write_escaped_str(f: &mut std::fmt::Formatter, s: &str) -> std::fmt::Result {
+	let mut written = 0;
+	for (i, c) in s.char_indices() {
+		let e = c.escape_debug();
+		if e.len() != 1 {
+			f.write_str(&s[written..i])?;
+			for c in e {
+				f.write_char(c)?;
+			}
+			written = i + c.len_utf8();
+		}
+	}
+	f.write_str(&s[written..])
+}
+
 impl Debug for RawStr {
 	fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-		fn write_escaped_str(f: &mut std::fmt::Formatter, s: &str) -> std::fmt::Result {
-			let mut written = 0;
-			for (i, c) in s.char_indices() {
-				let e = c.escape_debug();
-				if e.len() != 1 {
-					f.write_str(&s[written..i])?;
-					for c in e {
-						f.write_char(c)?;
-					}
-					written = i + c.len_utf8();
-				}
-			}
-			f.write_str(&s[written..])
-		}
 		f.write_char('"')?;
-		let mut bytes = self.as_bytes();
-		while !bytes.is_empty() {
-			match from_utf8(bytes) {
-				Ok(s) => {
-					write_escaped_str(f, s)?;
-					break;
-				}
-				Err(e) => {
-					let (valid, rest) = bytes.split_at(e.valid_up_to());
-					write_escaped_str(f, unsafe { from_utf8_unchecked(valid) })?;
-					let n = e.error_len().unwrap_or(rest.len());
-					for i in 0..n {
-						write!(f, "\\x{:02x}", rest[i])?;
-					}
-					bytes = &rest[n..];
-				}
+		for Utf8Chunk { valid, broken } in self.utf8_chunks() {
+			write_escaped_str(f, valid)?;
+			for &b in broken {
+				write!(f, "\\x{:02x}", b)?;
 			}
 		}
 		f.write_char('"')
