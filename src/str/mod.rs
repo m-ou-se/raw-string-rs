@@ -162,9 +162,13 @@ impl RawStr {
 	}
 
 	// Things that could be added:
-	//   pub fn split_whitespace(&self) -> SplitWhitespace
 	//   pub fn lines(&self) -> Lines
+	//   pub fn split_whitespace(&self) -> SplitWhitespace
+	//   pub fn trim
+	//   pub fn trim_left
+	//   pub fn trim_right
 	//
+	//  RawPattern and:
 	//   pub fn contains<'a, P: RawPattern<'a>>(&'a self, pat: P) -> bool
 	//   pub fn starts_with<'a, P: RawPattern<'a>>(&'a self, pat: P) -> bool
 	//   pub fn ends_with<'a, P: RawPattern<'a>>(&'a self, pat: P) -> bool
@@ -180,14 +184,9 @@ impl RawStr {
 	//   pub fn rmatches<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
 	//   pub fn match_indices<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
 	//   pub fn rmatch_indices<'a, P: RawPattern<'a>>(&'a self, pat: P) -> Matches<'a, P>
-	//   pub fn trim
-	//   pub fn trim_left
-	//   pub fn trim_right
 	//   pub fn trim_matches <RawPattern>
 	//   pub fn trim_left_matches <RawPattern>
 	//   pub fn trim_right_matches <RawPattern>
-	//   // (and RawPattern)
-	//
 	//   pub fn replace (RawPattern -> AsRef<RawStr>) -> RawString
 	//   pub fn replace_n (RawPattern -> AsRef<RawStr>, n) -> RawString
 	//
