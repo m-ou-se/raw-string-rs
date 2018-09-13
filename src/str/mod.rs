@@ -4,14 +4,14 @@ use std::convert::AsRef;
 use std::ffi::OsStr;
 use std::fmt::{Debug, Display, Formatter, Write};
 use std::mem::transmute;
-use std::ops::{
-	Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive,
-};
+use std::ops::{Index, IndexMut};
 use std::path::Path;
 use std::str::{from_utf8, Utf8Error};
 
+mod index;
 mod utf8chunks;
 
+pub use self::index::{RawStrIndex, RawStrIndexOutput};
 pub use self::utf8chunks::{Utf8Chunk, Utf8ChunksIter};
 
 /// A `str` with unchecked contents.
@@ -128,6 +128,30 @@ impl RawStr {
 		self.inner.is_ascii()
 	}
 
+	pub fn get<I: RawStrIndex>(&self, index: I) -> Option<&I::Output> {
+		index.get(self)
+	}
+
+	pub fn get_mut<I: RawStrIndex>(&mut self, index: I) -> Option<&mut I::Output> {
+		index.get_mut(self)
+	}
+
+	pub unsafe fn get_unchecked<I: RawStrIndex>(&self, index: I) -> &I::Output {
+		index.get_unchecked(self)
+	}
+
+	pub unsafe fn get_unchecked_mut<I: RawStrIndex>(&mut self, index: I) -> &mut I::Output {
+		index.get_unchecked_mut(self)
+	}
+
+	pub unsafe fn slice_unchecked(&self, begin: usize, end: usize) -> &RawStr {
+		self.get_unchecked(begin..end)
+	}
+
+	pub unsafe fn slice_mut_unchecked(&mut self, begin: usize, end: usize) -> &mut RawStr {
+		self.get_unchecked_mut(begin..end)
+	}
+
 	pub fn bytes(&self) -> std::slice::Iter<u8> {
 		self.inner.iter()
 	}
@@ -146,13 +170,6 @@ impl RawStr {
 	}
 
 	// Things that could be added:
-	//   pub fn get<I: SliceIndex<[u8]>>(&self, i: I) -> Option<& uhh..>
-	//   pub fn get_mut<I: SliceIndex<[u8]>>(&self, i: I) -> Option<&mut uhh..>
-	//   pub unsafe fn get_unchecked<I: SliceIndex<[u8]>>(&self, i: I) -> & uhh..
-	//   pub unsafe fn get_mut_unchecked<I: SliceIndex<[u8]>>(&self, i: I) -> &mut uhh..
-	//   pub unsafe fn slice_unchecked(&self, begin: usize, end: usize) -> &RawStr
-	//   pub unsafe fn slice_mut_unchecked(&self, begin: usize, end: usize) -> &mut RawStr
-	//
 	//   pub fn split_whitespace(&self) -> SplitWhitespace
 	//   pub fn lines(&self) -> Lines
 	//
@@ -274,28 +291,18 @@ impl<'a> Default for &'a mut RawStr {
 
 // Index {{{
 
-macro_rules! impl_index {
-	($range:ty) => {
-		impl Index<$range> for RawStr {
-			type Output = RawStr;
-			fn index(&self, index: $range) -> &RawStr {
-				RawStr::from_bytes(&self.as_bytes()[index])
-			}
-		}
-		impl IndexMut<$range> for RawStr {
-			fn index_mut(&mut self, index: $range) -> &mut RawStr {
-				RawStr::from_bytes_mut(&mut self.as_bytes_mut()[index])
-			}
-		}
-	};
+impl<I: RawStrIndex> Index<I> for RawStr {
+	type Output = I::Output;
+	fn index(&self, index: I) -> &I::Output {
+		index.index(self)
+	}
 }
 
-impl_index!(Range<usize>);
-impl_index!(RangeFrom<usize>);
-impl_index!(RangeFull);
-impl_index!(RangeInclusive<usize>);
-impl_index!(RangeTo<usize>);
-impl_index!(RangeToInclusive<usize>);
+impl<I: RawStrIndex> IndexMut<I> for RawStr {
+	fn index_mut(&mut self, index: I) -> &mut I::Output {
+		index.index_mut(self)
+	}
+}
 
 // }}}
 
