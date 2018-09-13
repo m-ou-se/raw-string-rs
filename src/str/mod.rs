@@ -120,10 +120,6 @@ impl RawStr {
 		self.inner.ends_with(x.as_ref().as_bytes())
 	}
 
-	pub fn is_ascii(&self) -> bool {
-		self.inner.is_ascii()
-	}
-
 	pub fn get<I: RawStrIndex>(&self, index: I) -> Option<&I::Output> {
 		index.get(self)
 	}
@@ -192,9 +188,6 @@ impl RawStr {
 	//   pub fn trim_right_matches <RawPattern>
 	//   // (and RawPattern)
 	//
-	//   pub fn eq_ignore_ascii_case
-	//   pub fn make_ascii_uppercase
-	//   pub fn make_ascii_lowercase
 	//   pub fn replace (RawPattern -> AsRef<RawStr>) -> RawString
 	//   pub fn replace_n (RawPattern -> AsRef<RawStr>, n) -> RawString
 	//
@@ -238,6 +231,22 @@ impl RawStr {
 	#[cfg(not(unix))]
 	fn to_osstr_(&self) -> Result<&OsStr, Utf8Error> {
 		Ok(OsStr::new(self.to_str()?))
+	}
+
+	pub fn is_ascii(&self) -> bool {
+		self.inner.is_ascii()
+	}
+
+	pub fn eq_ignore_ascii_case(&self, other: &RawStr) -> bool {
+		self.inner.eq_ignore_ascii_case(&other.inner)
+	}
+
+	pub fn make_ascii_uppercase(&mut self) {
+		self.inner.make_ascii_uppercase()
+	}
+
+	pub fn make_ascii_lowercase(&mut self) {
+		self.inner.make_ascii_lowercase()
 	}
 }
 
