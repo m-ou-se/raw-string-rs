@@ -2,9 +2,10 @@ use std;
 use std::borrow::{Borrow, ToOwned};
 use std::ffi::OsString;
 use std::fmt::{Debug, Display, Formatter};
-use std::ops::{Deref, DerefMut};
+use std::ops::{Deref, DerefMut, RangeBounds};
 use std::path::PathBuf;
 use std::string::FromUtf8Error;
+use std::vec::Drain;
 use str::RawStr;
 
 /// A `String` with unchecked contents.
@@ -67,25 +68,41 @@ impl RawString {
 		self.inner.clear()
 	}
 
-	// Things that could be added:
-	//   Iterator (+mut) / IntoIterator
-	//
-	//   pub fn truncate(&mut self, new_len: usize)
-	//   pub fn pop(&mut self) -> Option<u8>
-	//   pub fn remove(&mut self, idx: usize) -> u8
-	//   pub fn retain<F: FnMut(u8) -> bool>(&mut self, f: F)
-	//   pub fn insert(&mut self, idx: usize, b: u8)
-	//   pub fn insert_str<T: AsRef<RawStr>>(&mut self, idx: usize, string: T)
-	//   pub fn split_off(&mut self, at: usize) -> RawString
-	//   pub fn drain<R: RangeBounds<usize>>(&mut self, range: R) -> Drain
-	//   pub fn replace_range<R: RangeBounds<usize>, T: AsRef<RawStr>>(&mut self, range: R, replace_with: T)
-	//
-	//   from_utf16 (to convert to WTF-8)
-	//
-	// String has these, which also exist in str. Why?
-	//   pub fn as_butes(&self) -> &[u8]
-	//   pub fn len(&self) -> usize
-	//   pub fn is_empty(&self) -> bool
+	pub fn truncate(&mut self, new_len: usize) {
+		self.inner.truncate(new_len)
+	}
+
+	pub fn pop(&mut self) -> Option<u8> {
+		self.inner.pop()
+	}
+
+	pub fn remove(&mut self, idx: usize) -> u8 {
+		self.inner.remove(idx)
+	}
+
+	pub fn retain<F: FnMut(u8) -> bool>(&mut self, mut f: F) {
+		self.inner.retain(|x| f(*x))
+	}
+
+	pub fn insert(&mut self, idx: usize, b: u8) {
+		self.inner.insert(idx, b)
+	}
+
+	pub fn insert_str<T: AsRef<RawStr>>(&mut self, idx: usize, s: T) {
+		self.inner.splice(idx..idx, s.as_ref().bytes());
+	}
+
+	pub fn split_off(&mut self, at: usize) -> RawString {
+		RawString::from_bytes(self.inner.split_off(at))
+	}
+
+	pub fn drain<R: RangeBounds<usize>>(&mut self, range: R) -> Drain<u8> {
+		self.inner.drain(range)
+	}
+
+	pub fn replace_range<R: RangeBounds<usize>, T: AsRef<RawStr>>(&mut self, range: R, replace_with: T) {
+		self.inner.splice(range, replace_with.as_ref().bytes());
+	}
 
 	pub fn into_boxed_raw_str(self) -> Box<RawStr> {
 		let raw = Box::into_raw(self.inner.into_boxed_slice()) as *mut RawStr;
