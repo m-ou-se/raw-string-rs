@@ -58,26 +58,26 @@ impl RawStr {
 		self.inner.as_ptr()
 	}
 
-	pub fn first(&self) -> Option<&u8> {
-		self.inner.first()
+	pub fn first(&self) -> Option<u8> {
+		self.inner.first().map(|&x| x)
 	}
 
 	pub fn first_mut(&mut self) -> Option<&mut u8> {
 		self.inner.first_mut()
 	}
 
-	pub fn last(&self) -> Option<&u8> {
-		self.inner.last()
+	pub fn last(&self) -> Option<u8> {
+		self.inner.last().map(|&x| x)
 	}
 
 	pub fn last_mut(&mut self) -> Option<&mut u8> {
 		self.inner.last_mut()
 	}
 
-	pub fn split_first(&self) -> Option<(&u8, &RawStr)> {
+	pub fn split_first(&self) -> Option<(u8, &RawStr)> {
 		self.inner
 			.split_first()
-			.map(|(a, b)| (a, RawStr::from_bytes(b)))
+			.map(|(&a, b)| (a, RawStr::from_bytes(b)))
 	}
 
 	pub fn split_first_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
@@ -86,20 +86,16 @@ impl RawStr {
 			.map(|(a, b)| (a, RawStr::from_bytes_mut(b)))
 	}
 
-	pub fn split_last(&self) -> Option<(&u8, &RawStr)> {
+	pub fn split_last(&self) -> Option<(u8, &RawStr)> {
 		self.inner
 			.split_last()
-			.map(|(a, b)| (a, RawStr::from_bytes(b)))
+			.map(|(&a, b)| (a, RawStr::from_bytes(b)))
 	}
 
 	pub fn split_last_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
 		self.inner
 			.split_last_mut()
 			.map(|(a, b)| (a, RawStr::from_bytes_mut(b)))
-	}
-
-	pub fn iter(&self) -> std::slice::Iter<u8> {
-		self.inner.iter()
 	}
 
 	pub fn split_at(&self, mid: usize) -> (&RawStr, &RawStr) {
@@ -112,8 +108,8 @@ impl RawStr {
 		(RawStr::from_bytes_mut(a), RawStr::from_bytes_mut(b))
 	}
 
-	pub fn contains(&self, x: &u8) -> bool {
-		self.inner.contains(x)
+	pub fn contains(&self, x: u8) -> bool {
+		self.inner.contains(&x)
 	}
 
 	pub fn starts_with<T: AsRef<RawStr>>(&self, x: T) -> bool {
@@ -152,8 +148,8 @@ impl RawStr {
 		self.get_unchecked_mut(begin..end)
 	}
 
-	pub fn bytes(&self) -> std::slice::Iter<u8> {
-		self.inner.iter()
+	pub fn bytes(&self) -> std::iter::Cloned<std::slice::Iter<u8>> {
+		self.inner.iter().cloned()
 	}
 
 	pub fn bytes_mut(&mut self) -> std::slice::IterMut<u8> {
@@ -309,10 +305,10 @@ impl<I: RawStrIndex> IndexMut<I> for RawStr {
 // IntoIterator {{{
 
 impl<'a> IntoIterator for &'a RawStr {
-	type Item = &'a u8;
-	type IntoIter = std::slice::Iter<'a, u8>;
+	type Item = u8;
+	type IntoIter = std::iter::Cloned<std::slice::Iter<'a, u8>>;
 	fn into_iter(self) -> Self::IntoIter {
-		self.iter()
+		self.bytes()
 	}
 }
 
