@@ -48,7 +48,9 @@ where
 		s.as_bytes().get(self).map(RawStrIndexOutput::into)
 	}
 	fn get_mut(self, s: &mut RawStr) -> Option<&mut Self::Output> {
-		s.as_bytes_mut().get_mut(self).map(RawStrIndexOutput::into_mut)
+		s.as_bytes_mut()
+			.get_mut(self)
+			.map(RawStrIndexOutput::into_mut)
 	}
 	unsafe fn get_unchecked(self, s: &RawStr) -> &Self::Output {
 		RawStrIndexOutput::into(s.as_bytes().get_unchecked(self))

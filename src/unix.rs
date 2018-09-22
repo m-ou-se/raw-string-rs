@@ -1,9 +1,9 @@
 //! Conversions only available on unix.
 
-use std::path::{Path, PathBuf};
+use super::{RawStr, RawString};
 use std::ffi::{OsStr, OsString};
 use std::os::unix::ffi::{OsStrExt, OsStringExt};
-use super::{RawStr, RawString};
+use std::path::{Path, PathBuf};
 
 pub trait RawStrExt {
 	fn as_osstr(&self) -> &OsStr;

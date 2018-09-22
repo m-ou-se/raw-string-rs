@@ -100,7 +100,11 @@ impl RawString {
 		self.inner.drain(range)
 	}
 
-	pub fn replace_range<R: RangeBounds<usize>, T: AsRef<RawStr>>(&mut self, range: R, replace_with: T) {
+	pub fn replace_range<R: RangeBounds<usize>, T: AsRef<RawStr>>(
+		&mut self,
+		range: R,
+		replace_with: T,
+	) {
 		self.inner.splice(range, replace_with.as_ref().bytes());
 	}
 
