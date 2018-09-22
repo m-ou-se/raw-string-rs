@@ -1,5 +1,6 @@
 use std;
 use std::char::REPLACEMENT_CHARACTER;
+use std::cmp::Ordering;
 use std::convert::AsRef;
 use std::ffi::OsStr;
 use std::fmt::{Debug, Display, Formatter, Write};
@@ -391,6 +392,38 @@ impl Debug for RawStr {
 		f.write_char('"')
 	}
 }
+
+// }}}
+
+// {{{ PartialEq / PartialOrd
+
+macro_rules! impl_ord {
+	($t:ty) => {
+		impl PartialEq<$t> for RawStr {
+			fn eq(&self, other: &$t) -> bool {
+				<RawStr as PartialEq>::eq(self, other.as_ref())
+			}
+		}
+		impl PartialEq<RawStr> for $t {
+			fn eq(&self, other: &RawStr) -> bool {
+				<RawStr as PartialEq>::eq(self.as_ref(), other)
+			}
+		}
+		impl PartialOrd<$t> for RawStr {
+			fn partial_cmp(&self, other: &$t) -> Option<Ordering> {
+				<RawStr as PartialOrd>::partial_cmp(self, other.as_ref())
+			}
+		}
+		impl PartialOrd<RawStr> for $t {
+			fn partial_cmp(&self, other: &RawStr) -> Option<Ordering> {
+				<RawStr as PartialOrd>::partial_cmp(self.as_ref(), other)
+			}
+		}
+	};
+}
+
+impl_ord!(str);
+impl_ord!([u8]);
 
 // }}}
 

@@ -1,5 +1,6 @@
 use std;
 use std::borrow::{Borrow, ToOwned};
+use std::cmp::Ordering;
 use std::ffi::OsString;
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Deref, DerefMut, RangeBounds};
@@ -288,5 +289,41 @@ impl Debug for RawString {
 		Debug::fmt(self.deref(), f)
 	}
 }
+
+// }}}
+
+// {{{ PartialEq / PartialOrd
+
+macro_rules! impl_ord {
+	($t:ty) => {
+		impl<'a> PartialEq<$t> for RawString {
+			fn eq(&self, other: &$t) -> bool {
+				<RawStr as PartialEq>::eq(self, other.as_ref())
+			}
+		}
+		impl<'a> PartialEq<RawString> for $t {
+			fn eq(&self, other: &RawString) -> bool {
+				<RawStr as PartialEq>::eq(self.as_ref(), other)
+			}
+		}
+		impl<'a> PartialOrd<$t> for RawString {
+			fn partial_cmp(&self, other: &$t) -> Option<Ordering> {
+				<RawStr as PartialOrd>::partial_cmp(self, other.as_ref())
+			}
+		}
+		impl<'a> PartialOrd<RawString> for $t {
+			fn partial_cmp(&self, other: &RawString) -> Option<Ordering> {
+				<RawStr as PartialOrd>::partial_cmp(self.as_ref(), other)
+			}
+		}
+	};
+}
+
+impl_ord!(RawStr);
+impl_ord!(str);
+impl_ord!([u8]);
+impl_ord!(&'a RawStr);
+impl_ord!(&'a str);
+impl_ord!(&'a [u8]);
 
 // }}}
