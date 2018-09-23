@@ -27,6 +27,10 @@ pub struct RawStr {
 }
 
 impl RawStr {
+	pub fn from<S: AsRef<RawStr> + ?Sized>(s: &S) -> &Self {
+		s.as_ref()
+	}
+
 	pub fn from_bytes(bytes: &[u8]) -> &Self {
 		unsafe { transmute::<&[u8], &Self>(bytes) }
 	}
@@ -431,19 +435,19 @@ impl_ord!([u8]);
 
 #[test]
 fn test_display() {
-	let a: &RawStr = "1\" μs / °C".as_ref();
+	let a = RawStr::from("1\" μs / °C");
 	assert_eq!(&format!("{}", a), "1\" μs / °C");
 
-	let b: &RawStr = b"1 \xFF \xce\xbcs / \xc2\xb0C"[..].as_ref();
+	let b = RawStr::from_bytes(b"1 \xFF \xce\xbcs / \xc2\xb0C");
 	assert_eq!(&format!("{}", b), "1 \u{FFFD} μs / °C");
 }
 
 #[test]
 fn test_debug() {
-	let a: &RawStr = "1\" μs / °C".as_ref();
+	let a: &RawStr = RawStr::from("1\" μs / °C");
 	assert_eq!(&format!("{:?}", a), "\"1\\\" μs / °C\"");
 
-	let b: &RawStr = b"1 \xFF \xce\xbcs / \xc2\xb0C"[..].as_ref();
+	let b: &RawStr = RawStr::from_bytes(b"1 \xFF \xce\xbcs / \xc2\xb0C");
 	assert_eq!(&format!("{:?}", b), "\"1 \\xff μs / °C\"");
 }
 
