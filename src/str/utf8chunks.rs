@@ -8,6 +8,7 @@ pub struct Utf8ChunksIter<'a> {
 	pub(super) bytes: &'a [u8],
 }
 
+/// A chunk of valid UTF-8, possibly followed by a broken character encoding.
 pub struct Utf8Chunk<'a> {
 	/// A valid UTF-8 piece, at the start, end, or between broken chars.
 	///
