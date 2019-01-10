@@ -1,7 +1,7 @@
 [package]
 name = "raw-string"
 description = "RawStr/RawString are like str/String, but without any guaranteed encoding"
-version = "0.3.4"
+version = "0.3.5"
 authors = ["Mara Bos <m-ou.se@m-ou.se>"]
 repository = "https://github.com/m-ou-se/raw-string-rs"
 keywords = ["raw", "string", "bytes"]
