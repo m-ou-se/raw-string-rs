@@ -27,132 +27,162 @@ pub struct RawStr {
 }
 
 impl RawStr {
+	#[inline]
 	pub fn from<S: AsRef<RawStr> + ?Sized>(s: &S) -> &Self {
 		s.as_ref()
 	}
 
+	#[inline]
 	pub fn from_bytes(bytes: &[u8]) -> &Self {
 		unsafe { transmute::<&[u8], &Self>(bytes) }
 	}
 
+	#[inline]
 	pub fn from_str(bytes: &str) -> &Self {
 		Self::from_bytes(bytes.as_bytes())
 	}
 
+	#[inline]
 	pub fn as_bytes(&self) -> &[u8] {
 		&self.inner
 	}
 
+	#[inline]
 	pub fn from_bytes_mut(bytes: &mut [u8]) -> &mut Self {
 		unsafe { transmute::<&mut [u8], &mut Self>(bytes) }
 	}
 
+	#[inline]
 	pub fn as_bytes_mut(&mut self) -> &mut [u8] {
 		&mut self.inner
 	}
 
+	#[inline]
 	pub fn len(&self) -> usize {
 		self.inner.len()
 	}
 
+	#[inline]
 	pub fn is_empty(&self) -> bool {
 		self.inner.is_empty()
 	}
 
+	#[inline]
 	pub fn as_ptr(&self) -> *const u8 {
 		self.inner.as_ptr()
 	}
 
+	#[inline]
 	pub fn first(&self) -> Option<u8> {
 		self.inner.first().map(|&x| x)
 	}
 
+	#[inline]
 	pub fn first_mut(&mut self) -> Option<&mut u8> {
 		self.inner.first_mut()
 	}
 
+	#[inline]
 	pub fn last(&self) -> Option<u8> {
 		self.inner.last().map(|&x| x)
 	}
 
+	#[inline]
 	pub fn last_mut(&mut self) -> Option<&mut u8> {
 		self.inner.last_mut()
 	}
 
+	#[inline]
 	pub fn split_first(&self) -> Option<(u8, &RawStr)> {
 		self.inner
 			.split_first()
 			.map(|(&a, b)| (a, RawStr::from_bytes(b)))
 	}
 
+	#[inline]
 	pub fn split_first_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
 		self.inner
 			.split_first_mut()
 			.map(|(a, b)| (a, RawStr::from_bytes_mut(b)))
 	}
 
+	#[inline]
 	pub fn split_last(&self) -> Option<(u8, &RawStr)> {
 		self.inner
 			.split_last()
 			.map(|(&a, b)| (a, RawStr::from_bytes(b)))
 	}
 
+	#[inline]
 	pub fn split_last_mut(&mut self) -> Option<(&mut u8, &mut RawStr)> {
 		self.inner
 			.split_last_mut()
 			.map(|(a, b)| (a, RawStr::from_bytes_mut(b)))
 	}
 
+	#[inline]
 	pub fn split_at(&self, mid: usize) -> (&RawStr, &RawStr) {
 		let (a, b) = self.inner.split_at(mid);
 		(RawStr::from_bytes(a), RawStr::from_bytes(b))
 	}
 
+	#[inline]
 	pub fn split_at_mut(&mut self, mid: usize) -> (&mut RawStr, &mut RawStr) {
 		let (a, b) = self.inner.split_at_mut(mid);
 		(RawStr::from_bytes_mut(a), RawStr::from_bytes_mut(b))
 	}
 
+	#[inline]
 	pub fn contains_byte(&self, x: u8) -> bool {
 		self.inner.contains(&x)
 	}
 
+	#[inline]
 	pub fn starts_with<T: AsRef<RawStr>>(&self, x: T) -> bool {
 		self.inner.starts_with(x.as_ref().as_bytes())
 	}
 
+	#[inline]
 	pub fn ends_with<T: AsRef<RawStr>>(&self, x: T) -> bool {
 		self.inner.ends_with(x.as_ref().as_bytes())
 	}
 
+	#[inline]
 	pub fn get<I: RawStrIndex>(&self, index: I) -> Option<&I::Output> {
 		index.get(self)
 	}
 
+	#[inline]
 	pub fn get_mut<I: RawStrIndex>(&mut self, index: I) -> Option<&mut I::Output> {
 		index.get_mut(self)
 	}
 
+	#[inline]
 	pub unsafe fn get_unchecked<I: RawStrIndex>(&self, index: I) -> &I::Output {
 		index.get_unchecked(self)
 	}
 
+	#[inline]
 	pub unsafe fn get_unchecked_mut<I: RawStrIndex>(&mut self, index: I) -> &mut I::Output {
 		index.get_unchecked_mut(self)
 	}
 
+	#[inline]
 	pub unsafe fn slice_unchecked(&self, begin: usize, end: usize) -> &RawStr {
 		self.get_unchecked(begin..end)
 	}
 
+	#[inline]
 	pub unsafe fn slice_mut_unchecked(&mut self, begin: usize, end: usize) -> &mut RawStr {
 		self.get_unchecked_mut(begin..end)
 	}
 
+	#[inline]
 	pub fn bytes(&self) -> std::iter::Cloned<std::slice::Iter<u8>> {
 		self.inner.iter().cloned()
 	}
 
+	#[inline]
 	pub fn bytes_mut(&mut self) -> std::slice::IterMut<u8> {
 		self.inner.iter_mut()
 	}
@@ -162,6 +192,7 @@ impl RawStr {
 	/// The iterator iterates over the chunks of valid UTF-8 separated by any
 	/// broken characters, which could be replaced by the unicode replacement
 	/// character.
+	#[inline]
 	pub fn utf8_chunks(&self) -> Utf8ChunksIter {
 		Utf8ChunksIter { bytes: &self.inner }
 	}
@@ -200,6 +231,7 @@ impl RawStr {
 	//   pub fn utf8_char_indices() -> Utf8CharIndices
 	//   pub fn encode_utf16(&self) -> EncodeUtf16
 
+	#[inline]
 	pub fn to_str(&self) -> Result<&str, Utf8Error> {
 		from_utf8(self.as_bytes())
 	}
@@ -211,6 +243,7 @@ impl RawStr {
 	///
 	/// A never-failing version for Unix only is available as
 	/// [`unix::RawStrExt::as_osstr`](struct.RawStr.html#method.as_osstr).
+	#[inline]
 	pub fn to_osstr(&self) -> Result<&OsStr, Utf8Error> {
 		self.to_osstr_()
 	}
@@ -222,33 +255,40 @@ impl RawStr {
 	///
 	/// A never-failing version for Unix only is available as
 	/// [`unix::RawStrExt::as_path`](struct.RawStr.html#method.as_path).
+	#[inline]
 	pub fn to_path(&self) -> Result<&Path, Utf8Error> {
 		Ok(Path::new(self.to_osstr()?))
 	}
 
 	#[cfg(unix)]
+	#[inline]
 	fn to_osstr_(&self) -> Result<&OsStr, Utf8Error> {
 		use std::os::unix::ffi::OsStrExt;
 		Ok(OsStr::from_bytes(self.as_bytes()))
 	}
 
 	#[cfg(not(unix))]
+	#[inline]
 	fn to_osstr_(&self) -> Result<&OsStr, Utf8Error> {
 		Ok(OsStr::new(self.to_str()?))
 	}
 
+	#[inline]
 	pub fn is_ascii(&self) -> bool {
 		self.inner.is_ascii()
 	}
 
+	#[inline]
 	pub fn eq_ignore_ascii_case(&self, other: &RawStr) -> bool {
 		self.inner.eq_ignore_ascii_case(&other.inner)
 	}
 
+	#[inline]
 	pub fn make_ascii_uppercase(&mut self) {
 		self.inner.make_ascii_uppercase()
 	}
 
+	#[inline]
 	pub fn make_ascii_lowercase(&mut self) {
 		self.inner.make_ascii_lowercase()
 	}
@@ -257,24 +297,28 @@ impl RawStr {
 // AsRef {{{
 
 impl AsRef<RawStr> for RawStr {
+	#[inline]
 	fn as_ref(&self) -> &RawStr {
 		self
 	}
 }
 
 impl AsRef<RawStr> for [u8] {
+	#[inline]
 	fn as_ref(&self) -> &RawStr {
 		RawStr::from_bytes(self)
 	}
 }
 
 impl AsRef<RawStr> for str {
+	#[inline]
 	fn as_ref(&self) -> &RawStr {
 		RawStr::from_bytes(self.as_bytes())
 	}
 }
 
 impl AsRef<[u8]> for RawStr {
+	#[inline]
 	fn as_ref(&self) -> &[u8] {
 		&self.inner
 	}
@@ -285,12 +329,14 @@ impl AsRef<[u8]> for RawStr {
 // Default {{{
 
 impl<'a> Default for &'a RawStr {
+	#[inline]
 	fn default() -> Self {
 		RawStr::from_bytes(&[])
 	}
 }
 
 impl<'a> Default for &'a mut RawStr {
+	#[inline]
 	fn default() -> Self {
 		RawStr::from_bytes_mut(&mut [])
 	}
@@ -302,12 +348,14 @@ impl<'a> Default for &'a mut RawStr {
 
 impl<I: RawStrIndex> Index<I> for RawStr {
 	type Output = I::Output;
+	#[inline]
 	fn index(&self, index: I) -> &I::Output {
 		index.index(self)
 	}
 }
 
 impl<I: RawStrIndex> IndexMut<I> for RawStr {
+	#[inline]
 	fn index_mut(&mut self, index: I) -> &mut I::Output {
 		index.index_mut(self)
 	}
@@ -320,6 +368,7 @@ impl<I: RawStrIndex> IndexMut<I> for RawStr {
 impl<'a> IntoIterator for &'a RawStr {
 	type Item = u8;
 	type IntoIter = std::iter::Cloned<std::slice::Iter<'a, u8>>;
+	#[inline]
 	fn into_iter(self) -> Self::IntoIter {
 		self.bytes()
 	}
@@ -328,6 +377,7 @@ impl<'a> IntoIterator for &'a RawStr {
 impl<'a> IntoIterator for &'a mut RawStr {
 	type Item = &'a mut u8;
 	type IntoIter = std::slice::IterMut<'a, u8>;
+	#[inline]
 	fn into_iter(self) -> Self::IntoIter {
 		self.bytes_mut()
 	}
@@ -338,12 +388,14 @@ impl<'a> IntoIterator for &'a mut RawStr {
 // From {{{
 
 impl<'a> From<&'a str> for &'a RawStr {
+	#[inline]
 	fn from(src: &'a str) -> &'a RawStr {
 		RawStr::from_str(src)
 	}
 }
 
 impl<'a> From<&'a [u8]> for &'a RawStr {
+	#[inline]
 	fn from(src: &'a [u8]) -> &'a RawStr {
 		RawStr::from_bytes(src)
 	}
@@ -404,21 +456,25 @@ impl Debug for RawStr {
 macro_rules! impl_ord {
 	($t:ty) => {
 		impl PartialEq<$t> for RawStr {
+			#[inline]
 			fn eq(&self, other: &$t) -> bool {
 				<RawStr as PartialEq>::eq(self, other.as_ref())
 			}
 		}
 		impl PartialEq<RawStr> for $t {
+			#[inline]
 			fn eq(&self, other: &RawStr) -> bool {
 				<RawStr as PartialEq>::eq(self.as_ref(), other)
 			}
 		}
 		impl PartialOrd<$t> for RawStr {
+			#[inline]
 			fn partial_cmp(&self, other: &$t) -> Option<Ordering> {
 				<RawStr as PartialOrd>::partial_cmp(self, other.as_ref())
 			}
 		}
 		impl PartialOrd<RawStr> for $t {
+			#[inline]
 			fn partial_cmp(&self, other: &RawStr) -> Option<Ordering> {
 				<RawStr as PartialOrd>::partial_cmp(self.as_ref(), other)
 			}

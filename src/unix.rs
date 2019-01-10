@@ -17,9 +17,11 @@ pub trait RawStringExt {
 
 /// Conversions only available on unix.
 impl RawStrExt for RawStr {
+	#[inline]
 	fn as_osstr(&self) -> &OsStr {
 		OsStr::from_bytes(self.as_bytes())
 	}
+	#[inline]
 	fn as_path(&self) -> &Path {
 		Path::new(self.as_osstr())
 	}
@@ -27,9 +29,11 @@ impl RawStrExt for RawStr {
 
 /// Conversions only available on unix.
 impl RawStringExt for RawString {
+	#[inline]
 	fn into_osstring(self) -> OsString {
 		OsString::from_vec(self.into_bytes())
 	}
+	#[inline]
 	fn into_pathbuf(self) -> PathBuf {
 		PathBuf::from(self.into_osstring())
 	}

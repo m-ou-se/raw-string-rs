@@ -52,9 +52,11 @@ pub trait RawStrIndexOutput {
 
 impl RawStrIndexOutput for [u8] {
 	type Output = RawStr;
+	#[inline]
 	fn into(&self) -> &RawStr {
 		RawStr::from_bytes(self)
 	}
+	#[inline]
 	fn into_mut(&mut self) -> &mut RawStr {
 		RawStr::from_bytes_mut(self)
 	}
@@ -62,9 +64,11 @@ impl RawStrIndexOutput for [u8] {
 
 impl RawStrIndexOutput for u8 {
 	type Output = u8;
+	#[inline]
 	fn into(&self) -> &u8 {
 		self
 	}
+	#[inline]
 	fn into_mut(&mut self) -> &mut u8 {
 		self
 	}
@@ -76,23 +80,29 @@ where
 	I::Output: RawStrIndexOutput + 'static,
 {
 	type Output = <<I as SliceIndex<[u8]>>::Output as RawStrIndexOutput>::Output;
+	#[inline]
 	fn get(self, s: &RawStr) -> Option<&Self::Output> {
 		s.as_bytes().get(self).map(RawStrIndexOutput::into)
 	}
+	#[inline]
 	fn get_mut(self, s: &mut RawStr) -> Option<&mut Self::Output> {
 		s.as_bytes_mut()
 			.get_mut(self)
 			.map(RawStrIndexOutput::into_mut)
 	}
+	#[inline]
 	unsafe fn get_unchecked(self, s: &RawStr) -> &Self::Output {
 		RawStrIndexOutput::into(s.as_bytes().get_unchecked(self))
 	}
+	#[inline]
 	unsafe fn get_unchecked_mut(self, s: &mut RawStr) -> &mut Self::Output {
 		RawStrIndexOutput::into_mut(s.as_bytes_mut().get_unchecked_mut(self))
 	}
+	#[inline]
 	fn index(self, s: &RawStr) -> &Self::Output {
 		RawStrIndexOutput::into(&s.as_bytes()[self])
 	}
+	#[inline]
 	fn index_mut(self, s: &mut RawStr) -> &mut Self::Output {
 		RawStrIndexOutput::into_mut(&mut s.as_bytes_mut()[self])
 	}

@@ -48,6 +48,7 @@ impl<'a> Iterator for Utf8ChunksIter<'a> {
 		}
 	}
 
+	#[inline]
 	fn size_hint(&self) -> (usize, Option<usize>) {
 		if self.bytes.is_empty() {
 			(0, Some(0))
