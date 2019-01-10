@@ -484,6 +484,8 @@ macro_rules! impl_ord {
 
 impl_ord!(str);
 impl_ord!([u8]);
+impl_ord!(&str);
+impl_ord!(&[u8]);
 
 // }}}
 

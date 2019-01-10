@@ -341,25 +341,25 @@ impl Debug for RawString {
 
 macro_rules! impl_ord {
 	($t:ty) => {
-		impl<'a> PartialEq<$t> for RawString {
+		impl PartialEq<$t> for RawString {
 			#[inline]
 			fn eq(&self, other: &$t) -> bool {
 				<RawStr as PartialEq>::eq(self, other.as_ref())
 			}
 		}
-		impl<'a> PartialEq<RawString> for $t {
+		impl PartialEq<RawString> for $t {
 			#[inline]
 			fn eq(&self, other: &RawString) -> bool {
 				<RawStr as PartialEq>::eq(self.as_ref(), other)
 			}
 		}
-		impl<'a> PartialOrd<$t> for RawString {
+		impl PartialOrd<$t> for RawString {
 			#[inline]
 			fn partial_cmp(&self, other: &$t) -> Option<Ordering> {
 				<RawStr as PartialOrd>::partial_cmp(self, other.as_ref())
 			}
 		}
-		impl<'a> PartialOrd<RawString> for $t {
+		impl PartialOrd<RawString> for $t {
 			#[inline]
 			fn partial_cmp(&self, other: &RawString) -> Option<Ordering> {
 				<RawStr as PartialOrd>::partial_cmp(self.as_ref(), other)
@@ -371,8 +371,8 @@ macro_rules! impl_ord {
 impl_ord!(RawStr);
 impl_ord!(str);
 impl_ord!([u8]);
-impl_ord!(&'a RawStr);
-impl_ord!(&'a str);
-impl_ord!(&'a [u8]);
+impl_ord!(&RawStr);
+impl_ord!(&str);
+impl_ord!(&[u8]);
 
 // }}}
